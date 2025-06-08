@@ -458,7 +458,7 @@ export class Solidly extends UniswapV2 {
 
     const query = `query ($token: Bytes!, $count: Int) {
       pools0: pairs(first: $count, orderBy: reserveUSD, orderDirection: desc, where: {token0: $token ${
-        skipReserveCheck ? '' : ', reserve0_gt: 1, reserve1_gt: 1'
+        skipReserveCheck ? '' : ', reserve0_gt: 0.1, reserve1_gt: 0.1'
       }}) {
         id
         ${stableFieldKey}
@@ -473,7 +473,7 @@ export class Solidly extends UniswapV2 {
         reserveUSD
       }
       pools1: pairs(first: $count, orderBy: reserveUSD, orderDirection: desc, where: {token1: $token ${
-        skipReserveCheck ? '' : ', reserve0_gt: 1, reserve1_gt: 1'
+        skipReserveCheck ? '' : ', reserve0_gt: 0.1, reserve1_gt: 0.1'
       }}) {
         id
         ${stableFieldKey}
@@ -510,8 +510,7 @@ export class Solidly extends UniswapV2 {
           decimals: parseInt(pool.token1.decimals),
         },
       ],
-      liquidityUSD:
-        parseFloat(pool.reserveUSD) || (skipReserveCheck ? 10e5 : 0),
+      liquidityUSD: parseFloat(pool.reserveUSD),
     }));
 
     const pools1 = _.map(data.pools1, pool => ({
@@ -524,8 +523,7 @@ export class Solidly extends UniswapV2 {
           decimals: parseInt(pool.token0.decimals),
         },
       ],
-      liquidityUSD:
-        parseFloat(pool.reserveUSD) || (skipReserveCheck ? 10e5 : 0),
+      liquidityUSD: parseFloat(pool.reserveUSD),
     }));
 
     return _.slice(

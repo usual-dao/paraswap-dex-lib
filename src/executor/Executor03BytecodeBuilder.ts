@@ -25,6 +25,7 @@ import {
 
 export type Executor03SingleSwapCallDataParams = {
   swap: OptimalSwap;
+  swapExchangeIndex: number;
 };
 
 export type Executor03DexCallDataParams = {
@@ -154,6 +155,7 @@ export class Executor03BytecodeBuilder extends ExecutorBytecodeBuilder<
       index,
       flags,
       maybeWethCallData,
+      swapExchangeIndex,
       swap,
     } = params;
     if (!swap) throw new Error('Swap is not provided for single swap calldata');
@@ -166,7 +168,7 @@ export class Executor03BytecodeBuilder extends ExecutorBytecodeBuilder<
       priceRoute,
       routeIndex: 0,
       swapIndex: 0,
-      swapExchangeIndex: index,
+      swapExchangeIndex,
       exchangeParams,
       exchangeParamIndex: index,
       isLastSwap: true,
@@ -357,7 +359,7 @@ export class Executor03BytecodeBuilder extends ExecutorBytecodeBuilder<
 
       const toAmountIndex = exchangeData
         .replace('0x', '')
-        .indexOf(toAmount.replace('0x', ''));
+        .lastIndexOf(toAmount.replace('0x', ''));
 
       toAmountPos =
         (toAmountIndex !== -1 ? toAmountIndex : exchangeData.length) / 2;
@@ -392,13 +394,18 @@ export class Executor03BytecodeBuilder extends ExecutorBytecodeBuilder<
       .map((e, index) => ({
         exchangeParam: e,
         // to keep swapExchange in the same order as exchangeParams
-        swapExchange: swap.swapExchanges[index],
+        swapExchange: {
+          swapExchange: swap.swapExchanges[index],
+          swapExchangeIndex: index,
+        },
       }))
       .sort(e => (e.exchangeParam.needWrapNative ? 1 : -1));
 
     const swapWithOrderedExchanges: OptimalSwap = {
       ...swap,
-      swapExchanges: orderedExchangeParams.map(e => e.swapExchange),
+      swapExchanges: orderedExchangeParams.map(
+        e => e.swapExchange.swapExchange,
+      ),
     };
 
     const flags = this.buildFlags(
@@ -414,6 +421,7 @@ export class Executor03BytecodeBuilder extends ExecutorBytecodeBuilder<
           this.buildSingleSwapCallData({
             priceRoute,
             exchangeParams: orderedExchangeParams.map(e => e.exchangeParam),
+            swapExchangeIndex: ep.swapExchange.swapExchangeIndex,
             index,
             flags,
             sender,

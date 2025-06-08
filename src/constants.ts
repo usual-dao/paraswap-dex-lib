@@ -70,3 +70,7 @@ export const IS_CAP_SURPLUS_MASK = 1n << 92n;
 export const IS_SKIP_BLACKLIST_MASK = 1n << 93n;
 export const IS_REFERRAL_MASK = 1n << 94n;
 export const IS_TAKE_SURPLUS_MASK = 1n << 95n;
+
+// used for PoolTracker data
+export const NO_USD_LIQUIDITY = -1;
+export const UNLIMITED_USD_LIQUIDITY = 1234567890;

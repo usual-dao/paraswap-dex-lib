@@ -250,7 +250,7 @@ export class UniswapV2
   readonly DEST_TOKEN_DEX_TRANSFERS = 1;
 
   public static dexKeysWithNetwork: { key: string; networks: Network[] }[] =
-    getDexKeysWithNetwork(UniswapV2Config);
+    getDexKeysWithNetwork(_.omit(UniswapV2Config, 'PancakeSwapV2'));
 
   constructor(
     protected network: Network,
@@ -281,7 +281,7 @@ export class UniswapV2
       UniswapV2Config[dexKey][network].subgraphType,
   ) {
     super(dexHelper, dexKey);
-    this.logger = dexHelper.getLogger(dexKey);
+    this.logger = dexHelper.getLogger(`${dexKey}-${network}`);
 
     this.factory = new dexHelper.web3Provider.eth.Contract(
       uniswapV2factoryABI as any,
@@ -703,7 +703,7 @@ export class UniswapV2
     if (!this.subgraphURL) return [];
     const query = `
       query ($token: Bytes!, $count: Int) {
-        pools0: pairs(first: $count, orderBy: reserveUSD, orderDirection: desc, where: {token0: $token, reserve0_gt: 1, reserve1_gt: 1}) {
+        pools0: pairs(first: $count, orderBy: reserveUSD, orderDirection: desc, where: {token0: $token, reserve0_gt: 0.0001, reserve1_gt: 0.0001}) {
         id
         token0 {
           id
@@ -715,7 +715,7 @@ export class UniswapV2
         }
         reserveUSD
       }
-      pools1: pairs(first: $count, orderBy: reserveUSD, orderDirection: desc, where: {token1: $token, reserve0_gt: 1, reserve1_gt: 1}) {
+      pools1: pairs(first: $count, orderBy: reserveUSD, orderDirection: desc, where: {token1: $token, reserve0_gt: 0.0001, reserve1_gt: 0.0001}) {
         id
         token0 {
           id
@@ -743,6 +743,7 @@ export class UniswapV2
     const pools0 = _.map(data.pools0, pool => ({
       exchange: this.dexKey,
       address: pool.id.toLowerCase(),
+      poolIdentifier: this.getPoolIdentifier(pool.token0.id, pool.token1.id),
       connectorTokens: [
         {
           address: pool.token1.id.toLowerCase(),
@@ -755,6 +756,7 @@ export class UniswapV2
     const pools1 = _.map(data.pools1, pool => ({
       exchange: this.dexKey,
       address: pool.id.toLowerCase(),
+      poolIdentifier: this.getPoolIdentifier(pool.token0.id, pool.token1.id),
       connectorTokens: [
         {
           address: pool.token0.id.toLowerCase(),
@@ -1086,7 +1088,7 @@ export class UniswapV2
     return this.directFunctionNameV6;
   }
 
-  private getPoolIdentifier(token0: string, token1: string) {
+  protected getPoolIdentifier(token0: string, token1: string) {
     const [_token0, _token1] =
       token0.toLowerCase() < token1.toLowerCase()
         ? [token0, token1]

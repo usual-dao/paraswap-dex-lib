@@ -49,12 +49,12 @@ export const decodeATokenFromReserveData = (
 };
 
 async function _getAllTokenMetadata(
-  blockNumber: number,
   reservesList: string[],
   poolAddress: string,
   poolInterface: Interface,
   erc20Interface: Interface,
   multiWrapper: MultiWrapper,
+  blockNumber?: number,
 ): Promise<
   {
     address: string;
@@ -96,10 +96,10 @@ async function _getAllTokenMetadata(
 }
 
 async function _getATokenSymbols(
-  blockNumber: number,
   aTokens: string[],
   erc20Interface: Interface,
   multiWrapper: MultiWrapper,
+  blockNumber?: number,
 ): Promise<{ aSymbol: string }[]> {
   let calls: MultiCallParams<any>[] = [];
 
@@ -117,11 +117,11 @@ async function _getATokenSymbols(
 
 export const fetchTokenList = async (
   web3Provider: Web3,
-  blockNumber: number,
   poolAddress: string,
   poolInterface: Interface,
   erc20Interface: Interface,
   multiWrapper: MultiWrapper,
+  blockNumber?: number,
 ): Promise<AaveToken[]> => {
   let poolContract = new web3Provider.eth.Contract(
     POOL_ABI as any,
@@ -130,18 +130,18 @@ export const fetchTokenList = async (
   let reservesList = await poolContract.methods.getReservesList().call();
 
   let tokenMetadataList = await _getAllTokenMetadata(
-    blockNumber,
     reservesList,
     poolAddress,
     poolInterface,
     erc20Interface,
     multiWrapper,
+    blockNumber,
   );
   let aTokenSymbolsList = await _getATokenSymbols(
-    blockNumber,
     tokenMetadataList.map(metadata => metadata.aAddress),
     erc20Interface,
     multiWrapper,
+    blockNumber,
   );
   let tokenList = tokenMetadataList.map((metadata, i: number) => ({
     ...metadata,
