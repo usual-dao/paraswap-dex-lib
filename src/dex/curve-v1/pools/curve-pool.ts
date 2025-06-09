@@ -108,8 +108,7 @@ export abstract class CurvePool extends StatefulEventSubscriber<PoolState> {
   }
 
   protected getRates() {
-    const result = this.PRECISION_MUL.map(v => bigNumberify(v));
-    return result.map(r => r.times(this.LENDING_PRECISION));
+    return [...this.PRECISION_MUL].map(r => r.times(this.LENDING_PRECISION));
   }
 
   async generateState(
