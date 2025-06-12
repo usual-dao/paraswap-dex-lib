@@ -10,7 +10,7 @@ import {
   DexExchangeParam,
   NumberAsString,
 } from '../../types';
-import { SwapSide, Network, UNLIMITED_USD_LIQUIDITY } from '../../constants';
+import { SwapSide, Network } from '../../constants';
 import * as CALLDATA_GAS_COST from '../../calldata-gas-cost';
 import { getDexKeysWithNetwork } from '../../utils';
 import { IDex } from '../../dex/idex';
@@ -197,28 +197,14 @@ export class UsdcTransmuter
     if (this.isUSDC(tokenAddress) || this.isUSDCe(tokenAddress)) {
       const isUSDC = this.isUSDC(tokenAddress);
 
-      const { balance } = await this.eventPool.generateState();
-
-      const [liquidityUSD] = await this.dexHelper.getUsdTokenAmounts([
-        [this.config.usdcToken.address, balance],
-      ]);
-
       return [
         {
-          exchange: this.dexKey,
           address: this.config.usdcTransmuterAddress,
-          liquidityUSD: isUSDC ? UNLIMITED_USD_LIQUIDITY : liquidityUSD,
           connectorTokens: [
-            isUSDC
-              ? {
-                  ...this.config.usdceToken,
-                  liquidityUSD,
-                }
-              : {
-                  ...this.config.usdcToken,
-                  liquidityUSD: UNLIMITED_USD_LIQUIDITY,
-                },
+            isUSDC ? this.config.usdceToken : this.config.usdcToken,
           ],
+          exchange: this.dexKey,
+          liquidityUSD: 1000000000, // Just returning a big number so this DEX will be preferred
         },
       ];
     }
