@@ -10,7 +10,7 @@ import {
   DexExchangeParam,
   NumberAsString,
 } from '../../types';
-import { SwapSide, Network } from '../../constants';
+import { SwapSide, Network, UNLIMITED_USD_LIQUIDITY } from '../../constants';
 import * as CALLDATA_GAS_COST from '../../calldata-gas-cost';
 import { getDexKeysWithNetwork } from '../../utils';
 import { IDex } from '../../dex/idex';
@@ -199,18 +199,26 @@ export class UsdcTransmuter
 
       const { balance } = await this.eventPool.generateState();
 
-      const liquidityUSD = await this.dexHelper.getUsdTokenAmounts([
-        [tokenAddress, balance],
+      const [liquidityUSD] = await this.dexHelper.getUsdTokenAmounts([
+        [this.config.usdcToken.address, balance],
       ]);
 
       return [
         {
-          address: this.config.usdcTransmuterAddress,
-          connectorTokens: [
-            isUSDC ? this.config.usdceToken : this.config.usdcToken,
-          ],
           exchange: this.dexKey,
-          liquidityUSD: liquidityUSD[0], // Set a high value to prioritize this pool
+          address: this.config.usdcTransmuterAddress,
+          liquidityUSD: isUSDC ? UNLIMITED_USD_LIQUIDITY : liquidityUSD,
+          connectorTokens: [
+            isUSDC
+              ? {
+                  ...this.config.usdceToken,
+                  liquidityUSD,
+                }
+              : {
+                  ...this.config.usdcToken,
+                  liquidityUSD: UNLIMITED_USD_LIQUIDITY,
+                },
+          ],
         },
       ];
     }
