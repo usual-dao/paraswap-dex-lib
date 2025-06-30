@@ -146,6 +146,7 @@ const Dexes = [
   UniswapV3,
   UniswapV4,
   Algebra,
+  AlgebraIntegral,
   PancakeSwapV2,
   AlgebraIntegral,
   PancakeswapV3,

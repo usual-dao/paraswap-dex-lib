@@ -65,8 +65,8 @@ export class UsdcTransmuter
   }
 
   isAppropriatePair(srcToken: Token, destToken: Token): boolean {
-    const srcTokenAddress = srcToken.address.toLowerCase();
-    const destTokenAddress = destToken.address.toLowerCase();
+    const srcTokenAddress = srcToken.address;
+    const destTokenAddress = destToken.address;
 
     return (
       (this.isUSDC(srcTokenAddress) && this.isUSDCe(destTokenAddress)) ||
@@ -157,7 +157,6 @@ export class UsdcTransmuter
       dexFuncHasRecipient: false,
       exchangeData: swapData,
       targetExchange: this.config.usdcTransmuterAddress,
-      returnAmountPos: undefined,
     };
   }
 
