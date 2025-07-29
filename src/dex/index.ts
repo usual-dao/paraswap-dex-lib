@@ -99,6 +99,7 @@ import { SkyConverter } from './sky-converter/sky-converter';
 import { Cables } from './cables/cables';
 import { Stader } from './stader/stader';
 import { UsualBond } from './usual/usual-bond';
+import { UsdcUusdc } from './usual/usdc-uusdc';
 import { UsualMWrappedM } from './usual/usual-m-wrapped-m';
 import { UsualMUsd0 } from './usual/usual-m-usd0';
 import { MWrappedM } from './usual/m-wrapped-m';
@@ -208,6 +209,7 @@ const Dexes = [
   SkyConverter,
   Cables,
   FluidDex,
+  UsdcUusdc,
   UsualMWrappedM,
   MWrappedM,
   WrappedMM,
