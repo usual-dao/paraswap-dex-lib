@@ -6,21 +6,29 @@ import {
 } from '../../types';
 import { SwapSide, Network } from '../../constants';
 import { IDexHelper } from '../../dex-helper/idex-helper';
-import { DexParams } from './types';
+import { DexParams, MultiTokenDexParams } from './types';
 import { Interface, JsonFragment } from '@ethersproject/abi';
-import { Usual } from './usual';
+import { MultiTokenUsual } from './multi-token-usual';
 import { getDexKeysWithNetwork } from '../../utils';
 import IETH0_MINT_ZAP_ABI from '../../abi/eth0/IEth0MintZap.abi.json';
 
-const Config: DexConfigMap<DexParams & { eth0MintZapAddress: Address }> =
+const Config: DexConfigMap<MultiTokenDexParams & { eth0MintZapAddress: Address }> =
   {
     Eth0MintZap: {
       [Network.MAINNET]: {
         eth0MintZapAddress: '0xF4e791120f7791f42fedf61F8d77C12Efb387aA4',
-        fromToken: {
-          address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', //WETH
-          decimals: 18,
-        },
+        fromTokens: [
+          {
+            address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', //WETH
+            decimals: 18,
+            swapFunction: 'swapWETH',
+          },
+          {
+            address: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84', //stETH
+            decimals: 18,
+            swapFunction: 'swapStETH',
+          },
+        ],
         toToken: {
           address: '0x734eec7930bc84eC5732022B9EB949A81fB89AbE', //ETH0
           decimals: 18,
@@ -29,7 +37,7 @@ const Config: DexConfigMap<DexParams & { eth0MintZapAddress: Address }> =
     },
   };
 
-export class Eth0MintZap extends Usual {
+export class Eth0MintZap extends MultiTokenUsual {
   public static dexKeysWithNetwork: { key: string; networks: Network[] }[] =
     getDexKeysWithNetwork(Config);
 
@@ -56,11 +64,10 @@ export class Eth0MintZap extends Usual {
     side: SwapSide,
   ): Promise<DexExchangeParam> {
     if (this.isFromToken(srcToken) && this.isToToken(destToken)) {
-      const exchangeData = this.eth0MintZapIface.encodeFunctionData(
-        'swapWETH',
+        const exchangeData = this.eth0MintZapIface.encodeFunctionData(
+        this.config.fromTokens.find(token => token.address.toLowerCase() === srcToken.toLowerCase())?.swapFunction as string,
         [srcAmount, recipient, destAmount],
       );
-      console.log('exchangeData', exchangeData);
 
       return {
         needWrapNative: false,
