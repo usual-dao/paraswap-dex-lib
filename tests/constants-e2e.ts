@@ -195,6 +195,10 @@ export const Tokens: {
       address: '0x5DE8ab7E27f6E7A1fFf3E5B337584Aa43961BEeF',
       decimals: 18,
     },
+    stETH: {
+      address: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+      decimals: 18,
+    },
     wstETH: {
       address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
       decimals: 18,
@@ -555,6 +559,11 @@ export const Tokens: {
     arUSD: {
       address: '0x07D1718fF05a8C53C8F05aDAEd57C0d672945f9a',
       decimals: 18,
+    },
+    ETH0: {
+      address: '0x734eec7930bc84eC5732022B9EB949A81fB89AbE',
+      decimals: 18,
+      symbol: 'ETH0',
     },
     USD0: {
       address: '0x73A15FeD60Bf67631dC6cd7Bc5B6e8da8190aCF5',
