@@ -28,6 +28,11 @@ const Config: DexConfigMap<MultiTokenDexParams & { eth0MintZapAddress: Address }
             decimals: 18,
             swapFunction: 'swapStETH',
           },
+          {
+            address: '0x1f32b1c2345538c0c6f582fcb022739c4a194ebb', //wstETH
+            decimals: 18,
+            swapFunction: 'swapWstETH',
+          },
         ],
         toToken: {
           address: '0x734eec7930bc84eC5732022B9EB949A81fB89AbE', //ETH0
