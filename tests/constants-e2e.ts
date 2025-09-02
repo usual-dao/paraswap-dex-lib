@@ -195,10 +195,6 @@ export const Tokens: {
       address: '0x5DE8ab7E27f6E7A1fFf3E5B337584Aa43961BEeF',
       decimals: 18,
     },
-    stETH: {
-      address: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
-      decimals: 18,
-    },
     wstETH: {
       address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
       decimals: 18,

@@ -25,7 +25,6 @@ function testForNetwork(
 
   const sideToContractMethods = new Map([
     [SwapSide.SELL, [ContractMethod.swapExactAmountIn]],
-//    [SwapSide.BUY, [ContractMethod.swapExactAmountOut]],
   ]);
 
   describe(`${network}`, () => {
@@ -83,7 +82,7 @@ describe('stETH->ETH0 E2E', () => {
   describe('Mainnet', () => {
     const network = Network.MAINNET;
 
-    const tokenASymbol: string = 'stETH';
+    const tokenASymbol: string = 'STETH';
     const tokenBSymbol: string = 'ETH0';
 
     const tokenAAmount: string = '1000000000000000000';
@@ -100,17 +99,17 @@ describe('stETH->ETH0 E2E', () => {
   });
 });
 
-describe('WstETH->ETH0 E2E', () => {
+describe('wstETH->ETH0 E2E', () => {
   const dexKey = 'Eth0MintZap';
 
   describe('Mainnet', () => {
     const network = Network.MAINNET;
 
-    const tokenASymbol: string = 'stETH';
+    const tokenASymbol: string = 'wstETH';
     const tokenBSymbol: string = 'ETH0';
 
     const tokenAAmount: string = '1000000000000000000';
-    const tokenBAmount: string = '1000000000000000000';
+    const tokenBAmount: string = '1';
 
     testForNetwork(
       network,
@@ -122,4 +121,3 @@ describe('WstETH->ETH0 E2E', () => {
     );
   });
 });
-
